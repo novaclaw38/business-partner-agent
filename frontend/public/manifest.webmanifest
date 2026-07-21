@@ -1,0 +1,9 @@
+{
+  "name": "Viper — Business Partner",
+  "short_name": "Viper",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05070a",
+  "theme_color": "#05070a",
+  "icons": []
+}
