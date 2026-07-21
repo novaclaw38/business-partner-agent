@@ -51,6 +51,21 @@ export async function runAgentTurn(prompt: string, options: { continueSession?: 
     })
     return parseCliOutput(stdout)
   } catch (err: unknown) {
+    // The CLI can exit non-zero while still emitting valid JSON on stdout
+    // (e.g. an auth failure) — surface that specific message rather than
+    // the generic execFile error.
+    const stdout = (err as { stdout?: string })?.stdout
+    if (stdout) {
+      try {
+        return parseCliOutput(stdout)
+      } catch (parseErr) {
+        // fall through to the generic error below, but prefer parseErr's message
+        if (parseErr instanceof Error) {
+          throw new Error(`claude CLI invocation failed: ${parseErr.message}`)
+        }
+      }
+    }
+
     // --continue fails if there's no prior conversation yet in this cwd
     // (e.g. very first run) — retry once without it before giving up.
     if (options.continueSession !== false) {
@@ -71,7 +86,7 @@ function parseCliOutput(stdout: string): AgentTurnResult {
     return { reply: trimmed || '(empty response)' }
   }
   if (parsed.is_error) {
-    throw new Error(parsed.error || 'claude CLI reported an error')
+    throw new Error(parsed.error || parsed.result || 'claude CLI reported an error')
   }
   return { reply: parsed.result || '(no text response)', sessionId: parsed.session_id }
 }

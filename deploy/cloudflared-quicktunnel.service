@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloudflare Quick Tunnel for Viper (temporary, until permanent domain is set up)
+After=network.target business-partner-agent.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/cloudflared tunnel --config /dev/null --url http://localhost:3000
+Restart=always
+RestartSec=5
+User=byron
+
+[Install]
+WantedBy=multi-user.target

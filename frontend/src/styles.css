@@ -1,18 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #05070a;
-  --bg-panel: rgba(18, 24, 28, 0.72);
-  --bg-panel-solid: #0d1317;
-  --border: rgba(63, 255, 164, 0.18);
-  --border-strong: rgba(63, 255, 164, 0.45);
-  --accent: #3dffa4;
-  --accent-dim: #1f8f5f;
-  --accent-glow: rgba(61, 255, 164, 0.35);
-  --text: #dff7ea;
-  --text-dim: #7d9c91;
-  --danger: #ff5d6c;
-  --radius: 10px;
+  --void: #000000;
+  --panel: rgba(4, 14, 8, 0.72);
+  --panel-solid: #060f09;
+  --border: rgba(0, 255, 65, 0.16);
+  --border-strong: rgba(0, 255, 65, 0.5);
+  --phosphor: #00ff41;
+  --phosphor-dim: #0d3319;
+  --ghost: #7fffe0;
+  --glitch: #ff2079;
+  --ink: #d7ffe4;
+  --ink-dim: #4d7a5f;
+  --radius: 4px;
 }
 
 * {
@@ -27,12 +27,9 @@ body,
 }
 
 body {
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(61, 255, 164, 0.08), transparent),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px),
-    var(--bg);
-  color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--void);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -41,29 +38,52 @@ body {
 }
 
 ::selection {
-  background: var(--accent-glow);
-  color: #04140c;
+  background: rgba(0, 255, 65, 0.35);
+  color: #000;
 }
 
 button {
   font-family: inherit;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* --- Matrix rain backdrop --- */
+
+.rain-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 /* --- App shell --- */
 
 .app-shell {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   height: 100dvh;
   max-width: 720px;
   margin: 0 auto;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.82) 12%, rgba(0, 0, 0, 0.92) 100%);
 }
 
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
+  gap: 14px;
+  padding: 10px 18px;
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(6px);
 }
@@ -71,83 +91,66 @@ button {
 .topbar .wordmark {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  font-size: 15px;
-  color: var(--accent);
-  text-shadow: 0 0 12px var(--accent-glow);
+  letter-spacing: 0.2em;
+  font-size: 14px;
+  color: var(--phosphor);
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
 }
 
-.status-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  margin-right: 8px;
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+.topbar-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .topbar-right {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 12px;
-  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
 }
 
-.icon-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
+/* --- Voice head canvas --- */
 
-.icon-btn:hover {
-  color: var(--accent);
-  border-color: var(--border-strong);
-  box-shadow: 0 0 10px var(--accent-glow);
+.voice-head-wrap {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
 /* --- Login gate --- */
 
 .login-screen {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100dvh;
-  gap: 22px;
+  gap: 20px;
   padding: 24px;
   text-align: center;
 }
 
 .login-screen .wordmark-big {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 700;
-  letter-spacing: 0.3em;
-  color: var(--accent);
-  text-shadow: 0 0 24px var(--accent-glow);
+  letter-spacing: 0.32em;
+  color: var(--phosphor);
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.6), 0 0 28px rgba(0, 255, 65, 0.25);
 }
 
 .login-screen .tagline {
-  color: var(--text-dim);
-  font-size: 13px;
-  margin-top: -12px;
-  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  margin-top: -10px;
+  letter-spacing: 0.06em;
 }
 
 .login-form {
@@ -159,43 +162,56 @@ button {
 }
 
 .login-form input {
-  background: var(--bg-panel-solid);
+  background: var(--panel-solid);
   border: 1px solid var(--border);
-  color: var(--text);
+  color: var(--ink);
   padding: 12px 14px;
   border-radius: var(--radius);
   font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
   outline: none;
   transition: all 0.15s ease;
 }
 
 .login-form input:focus {
   border-color: var(--border-strong);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.15);
 }
 
 .login-form button,
 .primary-btn {
-  background: var(--accent);
-  color: #04140c;
+  background: var(--phosphor);
+  color: #001a0a;
   border: none;
   padding: 12px 14px;
   border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .login-form button:hover,
 .primary-btn:hover {
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 0 24px rgba(0, 255, 65, 0.45);
   transform: translateY(-1px);
 }
 
+.login-form button:focus-visible,
+.primary-btn:focus-visible,
+.composer textarea:focus-visible,
+.composer .send-btn:focus-visible,
+.composer .mic-btn:focus-visible {
+  outline: 2px solid var(--ghost);
+  outline-offset: 2px;
+}
+
 .login-error {
-  color: var(--danger);
-  font-size: 13px;
+  color: var(--glitch);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
 }
 
 /* --- Chat --- */
@@ -222,33 +238,39 @@ button {
   padding: 12px 14px;
   border-radius: var(--radius);
   font-size: 14.5px;
-  line-height: 1.5;
+  line-height: 1.55;
   white-space: pre-wrap;
 }
 
 .msg-bubble.agent {
-  background: var(--bg-panel);
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-top-left-radius: 3px;
+  border-left: 2px solid var(--phosphor-dim);
 }
 
 .msg-bubble.user {
-  background: rgba(61, 255, 164, 0.1);
-  border: 1px solid var(--border-strong);
-  border-top-right-radius: 3px;
+  background: rgba(127, 255, 224, 0.06);
+  border: 1px solid rgba(127, 255, 224, 0.3);
+  border-right: 2px solid var(--ghost);
 }
 
 .msg-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--text-dim);
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
   margin-bottom: 4px;
   text-transform: uppercase;
 }
 
 .msg-bubble.agent .msg-label {
-  color: var(--accent-dim);
+  color: var(--phosphor);
+  opacity: 0.8;
+}
+
+.msg-bubble.user .msg-label {
+  color: var(--ghost);
+  opacity: 0.8;
 }
 
 .thinking {
@@ -260,7 +282,7 @@ button {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--phosphor);
   animation: blink 1.2s infinite ease-in-out;
 }
 
@@ -285,13 +307,13 @@ button {
 .composer textarea {
   flex: 1;
   resize: none;
-  background: var(--bg-panel-solid);
+  background: var(--panel-solid);
   border: 1px solid var(--border);
-  color: var(--text);
+  color: var(--ink);
   padding: 12px 14px;
   border-radius: var(--radius);
   font-size: 14.5px;
-  font-family: inherit;
+  font-family: 'IBM Plex Sans', sans-serif;
   outline: none;
   max-height: 140px;
   transition: all 0.15s ease;
@@ -299,7 +321,7 @@ button {
 
 .composer textarea:focus {
   border-color: var(--border-strong);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.12);
 }
 
 .composer .send-btn,
@@ -308,8 +330,8 @@ button {
   height: 42px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: var(--bg-panel-solid);
-  color: var(--accent);
+  background: var(--panel-solid);
+  color: var(--phosphor);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,19 +343,19 @@ button {
 .composer .send-btn:hover,
 .composer .mic-btn:hover {
   border-color: var(--border-strong);
-  box-shadow: 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
 }
 
 .composer .mic-btn.recording {
-  background: var(--danger);
-  color: #1a0507;
-  border-color: var(--danger);
-  box-shadow: 0 0 16px rgba(255, 93, 108, 0.5);
-  animation: pulse 1s ease-in-out infinite;
+  background: var(--glitch);
+  color: #1a0009;
+  border-color: var(--glitch);
+  box-shadow: 0 0 16px rgba(255, 32, 121, 0.5);
+  animation: blink 1s ease-in-out infinite;
 }
 
 .composer .send-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: default;
   box-shadow: none;
 }
@@ -347,17 +369,20 @@ button {
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg-panel);
-  font-size: 12.5px;
-  color: var(--text-dim);
+  background: var(--panel);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ink-dim);
 }
 
 .notif-banner button {
   background: transparent;
   border: 1px solid var(--border-strong);
-  color: var(--accent);
+  color: var(--phosphor);
   padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
 }

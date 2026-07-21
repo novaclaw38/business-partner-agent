@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { LoginGate } from './components/LoginGate'
 import { ChatView } from './components/ChatView'
+import { MatrixRain } from './components/MatrixRain'
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false)
 
-  if (!authenticated) {
-    return <LoginGate onSuccess={() => setAuthenticated(true)} />
-  }
-
-  return <ChatView onLoggedOut={() => setAuthenticated(false)} />
+  return (
+    <>
+      <MatrixRain />
+      {authenticated ? (
+        <ChatView onLoggedOut={() => setAuthenticated(false)} />
+      ) : (
+        <LoginGate onSuccess={() => setAuthenticated(true)} />
+      )}
+    </>
+  )
 }

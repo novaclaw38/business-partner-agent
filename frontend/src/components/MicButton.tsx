@@ -15,7 +15,15 @@ function blobToBase64(blob: Blob): Promise<string> {
   })
 }
 
-export function MicButton({ onTranscript, disabled }: { onTranscript: (text: string) => void; disabled?: boolean }) {
+export function MicButton({
+  onTranscript,
+  onPress,
+  disabled,
+}: {
+  onTranscript: (text: string) => void
+  onPress?: () => void
+  disabled?: boolean
+}) {
   const [recording, setRecording] = useState(false)
   const [busy, setBusy] = useState(false)
   const recorderRef = useRef<MediaRecorder | null>(null)
@@ -59,6 +67,10 @@ export function MicButton({ onTranscript, disabled }: { onTranscript: (text: str
 
   function handleClick() {
     if (busy || disabled) return
+    // Must run synchronously inside this gesture handler, before any await,
+    // so the browser still counts the later programmatic audio.play() (after
+    // the STT + chat round-trips) as tied to real user activation.
+    onPress?.()
     if (recording) {
       stopRecording()
     } else {

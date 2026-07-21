@@ -1,0 +1,15 @@
+[Unit]
+Description=Business Partner Agent (Viper)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/byron/business-partner-agent
+EnvironmentFile=/home/byron/business-partner-agent/.env
+ExecStart=/usr/bin/node dist/server.js
+Restart=always
+RestartSec=5
+User=byron
+
+[Install]
+WantedBy=multi-user.target
