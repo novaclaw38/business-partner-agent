@@ -10,6 +10,9 @@
   --phosphor-dim: #0d3319;
   --ghost: #7fffe0;
   --glitch: #ff2079;
+  --mol-violet: #8a5cff;
+  --mol-cyan: #7fe0ff;
+  --mol-magenta: #ff2ea0;
   --ink: #d7ffe4;
   --ink-dim: #4d7a5f;
   --radius: 4px;
@@ -113,12 +116,30 @@ button {
   color: var(--ink-dim);
 }
 
-/* --- Voice head canvas --- */
+/* --- Molecule head hero --- */
 
-.voice-head-wrap {
-  width: 56px;
-  height: 56px;
-  flex-shrink: 0;
+.hero {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 4px;
+}
+
+.molecule-head-wrap {
+  width: 260px;
+  height: 260px;
+}
+
+.molecule-head-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .molecule-head-wrap {
+    width: 160px;
+    height: 160px;
+  }
 }
 
 /* --- Login gate --- */
