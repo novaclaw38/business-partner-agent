@@ -64,6 +64,8 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
   const mountRef = useRef<HTMLDivElement>(null)
   const stateRef = useRef(state)
   stateRef.current = state
+  const analyserRef = useRef(analyser)
+  analyserRef.current = analyser
 
   useEffect(() => {
     const mount = mountRef.current
@@ -118,6 +120,17 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
       targetGroup.add(bondMesh)
     })
 
+    const freqData = new Uint8Array(analyserRef.current?.frequencyBinCount ?? 128)
+
+    function audioLevel(): number {
+      const a = analyserRef.current
+      if (!a || stateRef.current !== 'speaking') return 0
+      a.getByteFrequencyData(freqData)
+      let sum = 0
+      for (let i = 0; i < freqData.length; i++) sum += freqData[i]
+      return freqData.length ? sum / freqData.length / 255 : 0
+    }
+
     jawGroup.position.copy(JAW_HINGE_ORIGIN)
     JAW_ATOMS.forEach((atom, i) => {
       const mesh = jawGroup.children[i] as THREE.Mesh
@@ -134,8 +147,23 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
     function tick() {
       t += 0.01
       const currentState = stateRef.current
+      const level = audioLevel()
+
       const rotSpeed = currentState === 'thinking' ? 0.012 : currentState === 'speaking' ? 0.006 : 0.004
       root.rotation.y += rotSpeed
+
+      const hingeTarget = currentState === 'speaking' ? level * 0.5 : 0
+      jawGroup.rotation.x += (hingeTarget - jawGroup.rotation.x) * 0.3
+
+      const glowPulse = currentState === 'thinking'
+        ? 0.5 + Math.sin(t * 4) * 0.3
+        : currentState === 'speaking'
+          ? 0.5 + level * 0.7
+          : 0.5 + Math.sin(t * 1.5) * 0.15
+      atomMaterial.emissiveIntensity = 0.4 + glowPulse * 0.4
+      bondMaterial.emissiveIntensity = 0.2 + glowPulse * 0.3
+      jawMaterial.emissiveIntensity = currentState === 'speaking' ? 0.4 + level * 1.2 : 0.4 + glowPulse * 0.3
+      jawMaterial.color.set(currentState === 'speaking' && level > 0.15 ? 0xff2ea0 : 0x7fe0ff)
 
       render()
       if (!reduceMotion) frame = requestAnimationFrame(tick)
