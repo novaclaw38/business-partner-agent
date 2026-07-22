@@ -221,11 +221,15 @@ button {
 }
 
 .login-form button:focus-visible,
-.primary-btn:focus-visible,
+.primary-btn:focus-visible {
+  outline: 2px solid var(--ghost);
+  outline-offset: 2px;
+}
+
 .composer textarea:focus-visible,
 .composer .send-btn:focus-visible,
 .composer .mic-btn:focus-visible {
-  outline: 2px solid var(--ghost);
+  outline: 2px solid var(--mol-cyan);
   outline-offset: 2px;
 }
 
@@ -265,14 +269,14 @@ button {
 
 .msg-bubble.agent {
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--phosphor-dim);
+  border: 1px solid rgba(138, 92, 255, 0.25);
+  border-left: 2px solid var(--mol-violet);
 }
 
 .msg-bubble.user {
-  background: rgba(127, 255, 224, 0.06);
-  border: 1px solid rgba(127, 255, 224, 0.3);
-  border-right: 2px solid var(--ghost);
+  background: rgba(127, 224, 255, 0.06);
+  border: 1px solid rgba(127, 224, 255, 0.3);
+  border-right: 2px solid var(--mol-cyan);
 }
 
 .msg-label {
@@ -285,13 +289,13 @@ button {
 }
 
 .msg-bubble.agent .msg-label {
-  color: var(--phosphor);
-  opacity: 0.8;
+  color: var(--mol-violet);
+  opacity: 0.9;
 }
 
 .msg-bubble.user .msg-label {
-  color: var(--ghost);
-  opacity: 0.8;
+  color: var(--mol-cyan);
+  opacity: 0.9;
 }
 
 .thinking {
@@ -303,7 +307,7 @@ button {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--phosphor);
+  background: var(--mol-violet);
   animation: blink 1.2s infinite ease-in-out;
 }
 
@@ -341,8 +345,8 @@ button {
 }
 
 .composer textarea:focus {
-  border-color: var(--border-strong);
-  box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.12);
+  border-color: var(--mol-violet);
+  box-shadow: 0 0 0 3px rgba(138, 92, 255, 0.18);
 }
 
 .composer .send-btn,
@@ -350,9 +354,9 @@ button {
   width: 42px;
   height: 42px;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(138, 92, 255, 0.25);
   background: var(--panel-solid);
-  color: var(--phosphor);
+  color: var(--mol-cyan);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -363,15 +367,15 @@ button {
 
 .composer .send-btn:hover,
 .composer .mic-btn:hover {
-  border-color: var(--border-strong);
-  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+  border-color: var(--mol-violet);
+  box-shadow: 0 0 12px rgba(138, 92, 255, 0.4);
 }
 
 .composer .mic-btn.recording {
-  background: var(--glitch);
+  background: var(--mol-magenta);
   color: #1a0009;
-  border-color: var(--glitch);
-  box-shadow: 0 0 16px rgba(255, 32, 121, 0.5);
+  border-color: var(--mol-magenta);
+  box-shadow: 0 0 16px rgba(255, 46, 160, 0.5);
   animation: blink 1s ease-in-out infinite;
 }
 
