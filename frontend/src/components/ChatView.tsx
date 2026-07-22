@@ -3,7 +3,7 @@ import { sendChat, synthesizeSpeech, UnauthorizedError } from '../lib/api'
 import { MessageList, type ChatMessage } from './MessageList'
 import { MicButton } from './MicButton'
 import { NotificationPrompt } from './NotificationPrompt'
-import { VoiceHead, type VoiceHeadState } from './VoiceHead'
+import { MoleculeHead, type MoleculeHeadState } from './MoleculeHead'
 
 export function ChatView({ onLoggedOut }: { onLoggedOut: () => void }) {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -17,7 +17,7 @@ export function ChatView({ onLoggedOut }: { onLoggedOut: () => void }) {
   const analyserRef = useRef<AnalyserNode | null>(null)
 
   // Wire the <audio> element through a Web Audio analyser once, so
-  // VoiceHead can react to real playback amplitude. Must connect through to
+  // MoleculeHead can react to real playback amplitude. Must connect through to
   // destination or the element goes silent (createMediaElementSource
   // reroutes output into the graph).
   useEffect(() => {
@@ -99,15 +99,18 @@ export function ChatView({ onLoggedOut }: { onLoggedOut: () => void }) {
     }
   }
 
-  const voiceHeadState: VoiceHeadState = speaking ? 'speaking' : pending ? 'thinking' : 'idle'
+  const moleculeState: MoleculeHeadState = speaking ? 'speaking' : pending ? 'thinking' : 'idle'
 
   return (
     <div className="app-shell">
+      <div className="hero">
+        <MoleculeHead state={moleculeState} analyser={analyserRef.current} />
+      </div>
+
       <div className="topbar">
-        <VoiceHead state={voiceHeadState} analyser={analyserRef.current} />
         <div className="topbar-meta">
           <div className="wordmark">VIPER</div>
-          <div className="topbar-right mono">{voiceHeadState}</div>
+          <div className="topbar-right mono">{moleculeState}</div>
         </div>
       </div>
 
