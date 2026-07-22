@@ -99,12 +99,10 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
     root.add(jawGroup)
     scene.add(root)
 
-    const atomMeshes: THREE.Mesh[] = []
     ALL_ATOMS.forEach((atom) => {
       const geometry = new THREE.SphereGeometry(atom.radius, 16, 16)
       const mesh = new THREE.Mesh(geometry, atom.jaw ? jawMaterial : atomMaterial)
       mesh.position.set(atom.x, atom.y, atom.z)
-      atomMeshes.push(mesh)
       ;(atom.jaw ? jawGroup : craniumGroup).add(mesh)
     })
 
@@ -120,11 +118,14 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
       targetGroup.add(bondMesh)
     })
 
-    const freqData = new Uint8Array(analyserRef.current?.frequencyBinCount ?? 128)
+    let freqData = new Uint8Array(0)
 
     function audioLevel(): number {
       const a = analyserRef.current
       if (!a || stateRef.current !== 'speaking') return 0
+      if (freqData.length !== a.frequencyBinCount) {
+        freqData = new Uint8Array(a.frequencyBinCount)
+      }
       a.getByteFrequencyData(freqData)
       let sum = 0
       for (let i = 0; i < freqData.length; i++) sum += freqData[i]
@@ -173,6 +174,16 @@ export function MoleculeHead({ state, analyser }: { state: MoleculeHeadState; an
 
     return () => {
       cancelAnimationFrame(frame)
+      scene.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+          obj.geometry.dispose()
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => m.dispose())
+          } else {
+            obj.material.dispose()
+          }
+        }
+      })
       renderer.dispose()
       mount.removeChild(renderer.domElement)
     }
